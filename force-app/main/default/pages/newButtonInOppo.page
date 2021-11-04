@@ -1,0 +1,35 @@
+<!-- 使用拓展来实现 这个逻辑 -->
+<apex:page standardController="Opportunity" extensions="custom_select_Vfctl" id="pg">
+    <!-- 一个lookup选项的input 查找custom_select__c  -->
+    <!-- 使用js来传递 在引用标准控制器的页面上的数据 -->
+    <!--     <script>
+        function custom_select__cInput() {
+            let selectId = document.getElementById('pg:form:pb:cs:selectId').value();
+            if (selectId == null) {
+                alert('full in the select id');
+            } else {
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.custom_select_Vfctl.checkAccountType}',
+                    selectId,
+                    function (result, event) {
+                    }
+                )
+            }
+        }
+    </script> -->
+    <apex:form id="form">
+        <apex:pageBlock title="顧客選択画面(Custom)" id="pb">
+            <apex:pageBlockSection title="選択機能" collapsible="false" id="cs">
+
+                <apex:inputField value="{!Opportunity.custom_select__c}" id="selectId" />
+
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons>
+                <apex:commandButton value="Previous" action="{!doPrevious}"></apex:commandButton>
+                <apex:commandButton value="Next" action="{!doNext}"></apex:commandButton>
+            </apex:pageBlockButtons>
+
+        </apex:pageBlock>
+        <!-- 两个button 分别连接到 之前的opppo的主页面 和 进一步页面 1、常规oppo做成 2、自定义页面 -->
+    </apex:form>
+</apex:page>

@@ -1,0 +1,76 @@
+<apex:page controller="vfSearchPagectrl">
+    <!-- 与action function联动call apex 、 被 apex:selectList 的 onchange call-->
+    <script>
+        function callSearch() {
+            Search();
+        }
+    </script>
+
+    <apex:form>
+        <!-- 被js 方向call 重新加载需要刷新的页面 -->
+        <apex:actionFunction name="Search" reRender="results,page,pg"></apex:actionFunction>
+        <!-- 整体的搜索界面 -->
+        <apex:pageBlock title="検索画面">
+            <apex:pageBlockSection title="検索機能" collapsible="false" columns="1">
+
+                <apex:pageBlockSectionItem>
+                    <apex:outputLabel value="検索番号"></apex:outputLabel>
+                    <apex:inputField value="{!bankAct.SearchNo__c}"></apex:inputField>
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSection columns="1" title="検索期間">
+                    <apex:pageBlockSectionItem>
+                        <apex:inputField value="{!bankAct.StartDate__c}"></apex:inputField>
+                        <apex:inputField value="{!bankAct.EndDate__c}">～</apex:inputField>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+
+            </apex:pageBlockSection>
+
+            <apex:pageBlockButtons>
+                <apex:commandButton value="検索" action="{!doSearch}"></apex:commandButton>
+                <apex:commandButton value="クリア" action="{!doClear}"></apex:commandButton>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+
+        <!-- 整体的结果界面 -->
+        <apex:pageBlock title="検索結果">
+            <!-- 页面展示数量的选项  如果搜索到的页面 不为0时展示  rendered就是true false 是否展示页面-->
+            <apex:panelGrid columns="5" rendered="{!if(pageNumber!=0,true,false)}" id="pg">
+                <!-- 第一个  当前页面  总页面数 -->
+                <apex:outputText>{!firstNum} - {!pageNumber}/{!NumberOfPages}</apex:outputText>
+                <apex:selectList value="{!pageSize}" onchange="callSearch()" size="1">
+                    <apex:selectOption itemValue="10" />
+                    <apex:selectOption itemValue="25" />
+                    <apex:selectOption itemValue="50" />
+                    <apex:selectOption itemValue="100" />
+                    <apex:selectOption itemValue="200" />
+                </apex:selectList>
+            </apex:panelGrid>
+            <!-- 页面展示结果的表格 colunm 表示每一列的项目 -->
+            <apex:pageBlockTable value="{!searchResults}" var="sr" id="results">
+                <apex:column value="{!sr.name}" />
+                <apex:column value="{!sr.RecordTypeId}" />
+                <apex:column value="{!sr.Branch__c}" />
+                <apex:column value="{!sr.Contact__c}" />
+                <apex:column value="{!sr.Account__c}" />
+                <apex:column value="{!sr.StartDate__c}" />
+                <apex:column value="{!sr.starting_balance__c}" />
+                <apex:column value="{!sr.EndDate__c}" />
+
+            </apex:pageBlockTable>
+            <!-- style="{!IF((haveReslut), '', 'display:none')}"  {!IF(haveReslut,false,true)}"-->
+            <apex:outputPanel id="ref3" rendered="{!IF(haveReslut==true,false,true)}">
+                <apex:outputText>検索条件に該当するデータがありません</apex:outputText>
+            </apex:outputPanel>
+        </apex:pageBlock>
+        <!-- 使用grid在同一行内展示更多的内容 -->
+        <apex:panelGrid columns="5" cellpadding="20px" id="page">
+            <apex:commandLink action="{!first}" rendered="{!if(hasPrevious,true,false)}">First</apex:commandLink>
+            <apex:commandLink action="{!previous}" rendered="{!hasPrevious}">Previous</apex:commandLink>
+            <apex:outputText rendered="{!if(pageNumber!=0,true,false)}">{!pageNumber}/{!NumberOfPages}</apex:outputText>
+            <apex:commandLink action="{!next}" rendered="{!hasNext}">Next</apex:commandLink>
+            <apex:commandLink action="{!last}" rendered="{!if(hasNext,true,false)}">Last</apex:commandLink>
+        </apex:panelGrid>
+    </apex:form>
+</apex:page>
